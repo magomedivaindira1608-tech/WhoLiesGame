@@ -1,0 +1,2949 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>КТО ВРЁТ?</title>
+
+<style>
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    background:#080b12;
+    color:#f1f4ff;
+    font-family:Arial,sans-serif;
+}
+
+button{
+    font:inherit;
+}
+
+#app{
+    max-width:900px;
+    margin:auto;
+    padding:15px;
+}
+
+.top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    margin-bottom:15px;
+}
+
+.logo{
+    font-size:21px;
+    font-weight:900;
+}
+
+.stats{
+    display:flex;
+    gap:6px;
+    flex-wrap:wrap;
+}
+
+.stat{
+    background:#151c2b;
+    border:1px solid #29344b;
+    padding:7px 10px;
+    border-radius:10px;
+    font-size:13px;
+}
+
+.card{
+    background:#101622;
+    border:1px solid #27334b;
+    border-radius:18px;
+    padding:18px;
+    margin-bottom:14px;
+    box-shadow:0 10px 35px rgba(0,0,0,.25);
+}
+
+.hero{
+    text-align:center;
+    padding:30px 18px;
+}
+
+.big{
+    font-size:65px;
+}
+
+h1,h2,h3{
+    margin-top:5px;
+}
+
+p{
+    line-height:1.5;
+}
+
+.muted{
+    color:#9da8bd;
+}
+
+.small{
+    font-size:13px;
+}
+
+.btn{
+    border:0;
+    border-radius:12px;
+    padding:12px 15px;
+    background:#6577ff;
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
+    margin:4px;
+}
+
+.btn:hover{
+    filter:brightness(1.12);
+}
+
+.secondary{
+    background:#202a3e;
+}
+
+.red{
+    background:#b63c4d;
+}
+
+.gold{
+    background:#a97819;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:10px;
+}
+
+.case{
+    background:#151d2c;
+    border:1px solid #293550;
+    border-radius:14px;
+    padding:14px;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.case:hover{
+    transform:translateY(-2px);
+    border-color:#6577ff;
+}
+
+.locked{
+    opacity:.45;
+    cursor:not-allowed;
+}
+
+.secret{
+    border-color:#9a63ff;
+}
+
+.badge{
+    display:inline-block;
+    background:#202a40;
+    color:#b9c5ff;
+    border-radius:999px;
+    padding:4px 8px;
+    font-size:11px;
+    font-weight:bold;
+}
+
+.row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+.timer{
+    font-size:23px;
+    font-weight:900;
+}
+
+.dangerTimer{
+    color:#ff5265;
+    animation:pulse .7s infinite;
+}
+
+@keyframes pulse{
+    50%{
+        opacity:.45;
+    }
+}
+
+.tabs{
+    display:flex;
+    gap:7px;
+    margin-bottom:12px;
+}
+
+.tab{
+    flex:1;
+    padding:10px;
+    border-radius:10px;
+    border:1px solid #29344d;
+    background:#141b29;
+    color:#aeb8ca;
+    cursor:pointer;
+}
+
+.active{
+    background:#293662;
+    color:white;
+}
+
+.item{
+    background:#151d2c;
+    border:1px solid #293550;
+    border-radius:12px;
+    padding:12px;
+    margin:8px 0;
+}
+
+.item strong{
+    display:block;
+    margin-bottom:6px;
+}
+
+.found{
+    border-color:#238b65;
+}
+
+.progress{
+    height:8px;
+    background:#20283a;
+    border-radius:20px;
+    overflow:hidden;
+}
+
+.progress div{
+    height:100%;
+    background:#6879ff;
+}
+
+.kpis{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:8px;
+    margin:15px 0;
+}
+
+.kpi{
+    background:#151d2c;
+    border:1px solid #293550;
+    border-radius:12px;
+    padding:12px;
+}
+
+.kpi b{
+    display:block;
+    font-size:21px;
+}
+
+.stars{
+    letter-spacing:2px;
+}
+
+.coins{
+    color:#ffd36b;
+}
+
+.shop{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+}
+
+.notice{
+    background:#171f31;
+    border-left:4px solid #6879ff;
+    padding:12px;
+    border-radius:10px;
+}
+
+
+/* =========================
+   НАШИ ОКНА
+========================= */
+
+.modal{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.78);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:15px;
+    z-index:100;
+    backdrop-filter:blur(5px);
+}
+
+.modal.hidden{
+    display:none;
+}
+
+.modalBox{
+    position:relative;
+    width:min(600px,100%);
+    max-height:90vh;
+    overflow:auto;
+    background:#111827;
+    border:1px solid #34415e;
+    border-radius:20px;
+    padding:24px 20px 20px;
+    box-shadow:0 25px 80px rgba(0,0,0,.6);
+    animation:modalIn .18s ease;
+}
+
+@keyframes modalIn{
+    from{
+        opacity:0;
+        transform:translateY(15px) scale(.97);
+    }
+    to{
+        opacity:1;
+        transform:none;
+    }
+}
+
+.close{
+    position:absolute;
+    right:12px;
+    top:10px;
+    width:38px;
+    height:38px;
+    border:0;
+    border-radius:50%;
+    background:#202a3e;
+    color:#fff;
+    font-size:23px;
+    line-height:38px;
+    cursor:pointer;
+}
+
+.close:hover{
+    background:#33415e;
+}
+
+.modalTitle{
+    padding-right:45px;
+}
+
+.modalButtons{
+    margin-top:16px;
+}
+
+@media(max-width:600px){
+
+    #app{
+        padding:10px;
+    }
+
+    .grid{
+        grid-template-columns:1fr;
+    }
+
+    .shop{
+        grid-template-columns:1fr;
+    }
+
+    .hero{
+        padding:25px 12px;
+    }
+
+    .big{
+        font-size:52px;
+    }
+
+    .btn{
+        width:calc(100% - 8px);
+    }
+
+    .top{
+        align-items:flex-start;
+    }
+
+    .logo{
+        font-size:18px;
+    }
+
+    .modalBox{
+        padding:22px 15px 15px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div id="app"></div>
+
+<script>
+
+"use strict";
+
+
+/* =====================================
+   СОХРАНЕНИЕ
+===================================== */
+
+const SAVE_KEY = "who_lies_game_v2";
+
+
+function defaultState(){
+
+    return {
+        unlocked:1,
+
+        solved:[],
+
+        stars:{},
+
+        clues:{},
+
+        questions:{},
+
+        timers:{},
+
+        points:0,
+
+        coins:100,
+
+        lives:3,
+
+        streak:0,
+
+        shop:{
+            hint:0,
+            time:0,
+            life:0
+        }
+    };
+
+}
+
+
+function loadState(){
+
+    try{
+
+        const saved=localStorage.getItem(SAVE_KEY);
+
+        if(saved){
+
+            return Object.assign(
+                defaultState(),
+                JSON.parse(saved)
+            );
+
+        }
+
+    }catch(e){
+
+        console.log(e);
+
+    }
+
+    return defaultState();
+
+}
+
+
+let state=loadState();
+
+
+function save(){
+
+    localStorage.setItem(
+        SAVE_KEY,
+        JSON.stringify(state)
+    );
+
+}
+
+
+/* =====================================
+   ДЕЛА
+===================================== */
+
+const cases=[
+
+{
+title:"Пропавший телефон",
+place:"Квартира",
+difficulty:"ЛЕГКО",
+
+story:"После вечеринки из квартиры исчез дорогой телефон. Трое гостей утверждают, что почти весь вечер находились на своих местах.",
+
+culprit:1,
+
+people:[
+"Алина",
+"Максим",
+"Денис"
+],
+
+clues:[
+"Камера в подъезде показывает, что Максим выходил из квартиры в 22:18.",
+"Телефон последний раз видели на кухонном столе в 22:10.",
+"Денис разговаривал с братом по видеосвязи с 22:05 до 22:31."
+],
+
+answers:[
+"Я весь вечер был в гостиной.",
+"Я ничего не брал.",
+"Я разговаривал с братом."
+]
+
+},
+
+{
+title:"Закрытый кабинет",
+place:"Офис",
+difficulty:"ЛЕГКО",
+
+story:"Из кабинета пропал конверт с деньгами. Дверь была закрыта, а ключи находились только у трёх сотрудников.",
+
+culprit:0,
+
+people:[
+"Ирина",
+"Олег",
+"Саша"
+],
+
+clues:[
+"Электронный замок зарегистрировал открытие двери в 18:42 картой Ирины.",
+"Олег в 18:40 ушёл на парковку.",
+"Саша в 18:42 находилась на видеозвонке."
+],
+
+answers:[
+"Я ушла раньше всех.",
+"Я был на парковке.",
+"Я говорила с клиентом."
+]
+
+},
+
+{
+title:"Ночная остановка",
+place:"Улица",
+difficulty:"ЛЕГКО",
+
+story:"У машины разбили окно. Свидетели слышали звук примерно в 23:15.",
+
+culprit:2,
+
+people:[
+"Лев",
+"Рита",
+"Кирилл"
+],
+
+clues:[
+"Лев находился внутри магазина в 23:14.",
+"Рита оплатила такси в 23:12.",
+"Телефон Кирилла подключился к Wi-Fi кафе рядом с машиной в 23:16."
+],
+
+answers:[
+"Я покупал воду.",
+"Я сразу уехала на такси.",
+"Я уже был дома."
+]
+
+},
+
+{
+title:"Исчезнувшая флешка",
+place:"Учебный кабинет",
+difficulty:"ЛЕГКО",
+
+story:"С компьютера исчезла флешка с важным проектом.",
+
+culprit:1,
+
+people:[
+"Маша",
+"Тимур",
+"Вика"
+],
+
+clues:[
+"Система показывает копирование файла в 16:27 с компьютера Тимура.",
+"Маша ушла из кабинета в 16:10.",
+"Вика в 16:27 была в коридоре."
+],
+
+answers:[
+"Я ушла раньше.",
+"Я ничего не копировал.",
+"Я была в коридоре."
+]
+
+},
+
+{
+title:"Подмена посылки",
+place:"Пункт выдачи",
+difficulty:"ЛЕГКО",
+
+story:"Клиент получил пустую коробку вместо дорогого товара.",
+
+culprit:0,
+
+people:[
+"Ника",
+"Роман",
+"Илья"
+],
+
+clues:[
+"Камера показывает Нику у стола с посылками в 14:06.",
+"Роман принимал другую посылку у окна.",
+"Илья пришёл только в 14:20."
+],
+
+answers:[
+"Я только сортировала коробки.",
+"Я был у окна.",
+"Я пришёл позже."
+]
+
+},
+
+{
+title:"Сломанный ноутбук",
+place:"Комната",
+difficulty:"СРЕДНЕ",
+
+story:"Ноутбук оказался повреждён. Каждый подозреваемый утверждает, что видел его целым.",
+
+culprit:2,
+
+people:[
+"Катя",
+"Марат",
+"Егор"
+],
+
+clues:[
+"Фото Кати сделано в 19:03, и ноутбук на нём цел.",
+"Марат ушёл в 18:50.",
+"На видео Егора в 19:11 слышен звук падения."
+],
+
+answers:[
+"Я видела ноутбук целым.",
+"Я ушёл раньше.",
+"Я вообще его не трогал."
+]
+
+},
+
+{
+title:"Странный чек",
+place:"Кафе",
+difficulty:"СРЕДНЕ",
+
+story:"Из кассы пропала часть выручки.",
+
+culprit:1,
+
+people:[
+"Света",
+"Артур",
+"Женя"
+],
+
+clues:[
+"Касса открывалась в 21:34 под кодом Артура.",
+"Света в 21:34 принимала заказ.",
+"Женя закончил смену в 21:10."
+],
+
+answers:[
+"Я была занята заказом.",
+"Я не открывал кассу.",
+"Я уже закончил смену."
+]
+
+},
+
+{
+title:"Ключ от гаража",
+place:"Гараж",
+difficulty:"СРЕДНЕ",
+
+story:"Из гаража исчез дорогой инструмент.",
+
+culprit:2,
+
+people:[
+"Павел",
+"Лена",
+"Руслан"
+],
+
+clues:[
+"Павел отправил фото из магазина в 17:02.",
+"Лена была на тренировке до 17:30.",
+"Руслан утверждает, что не заходил в гараж, но знает точное место ключа."
+],
+
+answers:[
+"Я был в магазине.",
+"Я была на тренировке.",
+"Я туда не заходил."
+]
+
+},
+
+{
+title:"Записка на столе",
+place:"Офис",
+difficulty:"СРЕДНЕ",
+
+story:"Кто-то оставил записку, из-за которой сорвалась важная встреча.",
+
+culprit:0,
+
+people:[
+"Аня",
+"Глеб",
+"Миша"
+],
+
+clues:[
+"На документе стоит служебный символ компьютера Ани.",
+"Глеб в момент печати находился в переговорной.",
+"Миша не имел доступа к принтеру."
+],
+
+answers:[
+"Я ничего не печатала.",
+"Я был в переговорной.",
+"У меня нет доступа к принтеру."
+]
+
+},
+
+{
+title:"Пропавший билет",
+place:"Вокзал",
+difficulty:"СРЕДНЕ",
+
+story:"Из сумки исчез билет.",
+
+culprit:1,
+
+people:[
+"Соня",
+"Игорь",
+"Рома"
+],
+
+clues:[
+"Соня стояла у кассы.",
+"Игорь был замечен рядом с сумкой в 12:18.",
+"Рома в это время разговаривал по телефону."
+],
+
+answers:[
+"Я стояла у кассы.",
+"Я не подходил к сумке.",
+"Я говорил по телефону."
+]
+
+},
+
+{
+title:"Ошибка в отчёте",
+place:"Компания",
+difficulty:"СЛОЖНО",
+
+story:"Важная цифра в отчёте была изменена перед отправкой.",
+
+culprit:2,
+
+people:[
+"Оля",
+"Влад",
+"Стас"
+],
+
+clues:[
+"Файл изменён с аккаунта Стаса в 18:04.",
+"Оля закончила работу в 17:55.",
+"Влад в 18:04 находился на встрече."
+],
+
+answers:[
+"Я закончила работу раньше.",
+"Я был на встрече.",
+"Я не менял файл."
+]
+
+},
+
+{
+title:"Разбитая витрина",
+place:"Магазин",
+difficulty:"СЛОЖНО",
+
+story:"После закрытия магазина разбилась витрина.",
+
+culprit:0,
+
+people:[
+"Вера",
+"Антон",
+"Костя"
+],
+
+clues:[
+"Сигнализация отключена кодом Веры в 22:03.",
+"Антон вышел из здания в 21:50.",
+"Костя не имел кода сигнализации."
+],
+
+answers:[
+"Я ушла до закрытия.",
+"Я ушёл в 21:50.",
+"У меня нет кода."
+]
+
+},
+
+{
+title:"Чужой рюкзак",
+place:"Школа",
+difficulty:"СЛОЖНО",
+
+story:"Из рюкзака исчезли наушники.",
+
+culprit:1,
+
+people:[
+"Даша",
+"Артём",
+"Саша"
+],
+
+clues:[
+"Даша ушла из класса в 13:20.",
+"Артём оставался в классе до 13:45.",
+"Саша в 13:30 была в библиотеке."
+],
+
+answers:[
+"Я ушла первой.",
+"Я не трогал рюкзак.",
+"Я была в библиотеке."
+]
+
+},
+
+{
+title:"Секретный файл",
+place:"Серверная",
+difficulty:"СЛОЖНО",
+
+story:"Кто-то попытался скачать закрытый файл.",
+
+culprit:2,
+
+people:[
+"Ира",
+"Макс",
+"Никита"
+],
+
+clues:[
+"Ира вошла в серверную в 20:01.",
+"Макс в это время работал с клиентом.",
+"Никита подключил внешний накопитель в 20:07."
+],
+
+answers:[
+"Я только вошла.",
+"Я работал с клиентом.",
+"Я ничего не скачивал."
+]
+
+},
+
+{
+title:"Конверт в сейфе",
+place:"Дом",
+difficulty:"СЛОЖНО",
+
+story:"Из сейфа исчез конверт.",
+
+culprit:0,
+
+people:[
+"Лиза",
+"Сергей",
+"Таня"
+],
+
+clues:[
+"Сейф открывали в 09:16 кодом Лизы.",
+"Сергей в это время был в дороге.",
+"Таня не знала новый код."
+],
+
+answers:[
+"Я не открывала сейф.",
+"Я был в дороге.",
+"Я не знала новый код."
+]
+
+},
+
+{
+title:"След на окне",
+place:"Дом",
+difficulty:"ЭКСПЕРТ",
+
+story:"Кто-то проник через окно. Но одна версия не совпадает с фактами.",
+
+culprit:2,
+
+people:[
+"Марина",
+"Олег",
+"Федя"
+],
+
+clues:[
+"Марина весь вечер находилась на первом этаже.",
+"Олег приехал домой только в 23:40.",
+"Федя сказал, что окно было закрыто, хотя никто ему этого не говорил."
+],
+
+answers:[
+"Я была внизу.",
+"Я приехал позже.",
+"Я видел окно закрытым."
+]
+
+},
+
+{
+title:"Поддельное сообщение",
+place:"Телефон",
+difficulty:"ЭКСПЕРТ",
+
+story:"Кому-то отправили сообщение от чужого имени.",
+
+culprit:1,
+
+people:[
+"Надя",
+"Ринат",
+"Кира"
+],
+
+clues:[
+"Сообщение отправлено с устройства Рината в 15:48.",
+"Надя в это время была без телефона.",
+"Кира находилась на занятии."
+],
+
+answers:[
+"У меня не было телефона.",
+"Я не отправлял сообщение.",
+"Я была на занятии."
+]
+
+},
+
+{
+title:"Последний автобус",
+place:"Остановка",
+difficulty:"ЭКСПЕРТ",
+
+story:"Кто-то оставил сумку в автобусе, а позже она исчезла.",
+
+culprit:0,
+
+people:[
+"Юля",
+"Данил",
+"Сева"
+],
+
+clues:[
+"Юля вышла из автобуса последней.",
+"Данил вышел на две остановки раньше.",
+"Сева вообще не ехал этим маршрутом."
+],
+
+answers:[
+"Я вышла первой.",
+"Я вышел раньше.",
+"Я не ехал этим автобусом."
+]
+
+},
+
+{
+title:"Печать ночью",
+place:"Типография",
+difficulty:"ЭКСПЕРТ",
+
+story:"В 02:13 был напечатан документ, которого никто не заказывал.",
+
+culprit:2,
+
+people:[
+"Лера",
+"Виктор",
+"Арсен"
+],
+
+clues:[
+"Лера закончила смену в 00:30.",
+"Виктор потерял доступ к принтеру в полночь.",
+"Арсен вошёл в систему в 02:11."
+],
+
+answers:[
+"Я закончила работу давно.",
+"У меня нет доступа.",
+"Я только вошёл в систему."
+]
+
+},
+
+{
+title:"Двойное алиби",
+place:"Ресторан",
+difficulty:"ЭКСПЕРТ",
+
+story:"После закрытия ресторана исчезла выручка.",
+
+culprit:1,
+
+people:[
+"Ася",
+"Борис",
+"Лена"
+],
+
+clues:[
+"Ася была у входа по камере.",
+"Борис утверждает, что ушёл в 23:00.",
+"Лена получила чек такси в 22:58."
+],
+
+answers:[
+"Я была у входа.",
+"Я ушёл в 23:00.",
+"Я вызвала такси."
+]
+
+}
+
+];
+
+
+/* =====================================
+   СЕКРЕТНЫЕ ДЕЛА
+===================================== */
+
+const secretCases=[
+
+{
+title:"Архив 00:17",
+place:"Закрытый архив",
+difficulty:"СЕКРЕТ",
+
+story:"В архиве появился неизвестный посетитель. Система сохранила только несколько обрывков данных.",
+
+culprit:2,
+
+people:[
+"Алекс",
+"Мира",
+"Кодовое имя «Ноль»"
+],
+
+clues:[
+"Карта Алекса не использовалась после 23:00.",
+"Мира отправила сообщение из другого города в 00:10.",
+"В 00:17 неизвестный пропуск открыл внутреннюю дверь."
+],
+
+answers:[
+"Я не был в архиве.",
+"Я была далеко отсюда.",
+"Я ничего не открывал."
+]
+
+},
+
+{
+title:"Чёрный конверт",
+place:"Подземная парковка",
+difficulty:"СЕКРЕТ",
+
+story:"В машине оставили конверт. Три человека знали о нём.",
+
+culprit:0,
+
+people:[
+"Кира",
+"Роман",
+"Ильдар"
+],
+
+clues:[
+"Кира сказала, что не видела машину после 21:00.",
+"Камера показывает её возле машины в 21:18.",
+"Роман и Ильдар покинули парковку раньше."
+],
+
+answers:[
+"Я не подходила к машине.",
+"Я ушёл раньше.",
+"Я уехал первым."
+]
+
+},
+
+{
+title:"Дело без номера",
+place:"Неизвестное место",
+difficulty:"СЕКРЕТ",
+
+story:"Последнее дело не содержит имени подозреваемого. Есть только три версии и набор фактов.",
+
+culprit:1,
+
+people:[
+"Свидетель",
+"Оператор",
+"Наблюдатель"
+],
+
+clues:[
+"Свидетель сообщил точное время события, хотя утверждал, что не видел часов.",
+"Оператор в это время находился перед камерами.",
+"Наблюдатель не имел доступа к журналу."
+],
+
+answers:[
+"Я просто видел происходящее.",
+"Я работал с камерами.",
+"У меня нет доступа."
+]
+
+}
+
+];
+
+const allCases=cases.concat(secretCases);
+
+
+/* =====================================
+   ТЕКУЩЕЕ СОСТОЯНИЕ
+===================================== */
+
+let currentCase=0;
+
+let currentTab="clues";
+
+let timerInterval=null;
+
+
+/* =====================================
+   СЛУЖЕБНЫЕ ФУНКЦИИ
+===================================== */
+
+function esc(text){
+
+    return String(text)
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;");
+
+}
+
+
+function getClues(id){
+
+    if(!state.clues[id]){
+        state.clues[id]=[];
+    }
+
+    return state.clues[id];
+
+}
+
+
+function getQuestions(id){
+
+    if(!state.questions[id]){
+        state.questions[id]=[];
+    }
+
+    return state.questions[id];
+
+}
+
+
+function isSecret(id){
+
+    return id>20;
+
+}
+
+
+function isUnlocked(id){
+
+    if(isSecret(id)){
+
+        return state.solved.filter(
+            x=>x<=20
+        ).length===20;
+
+    }
+
+    return id<=state.unlocked;
+
+}
+
+
+function getLimit(id){
+
+    if(isSecret(id))return 90;
+
+    if(id<=5)return 180;
+
+    if(id<=10)return 150;
+
+    if(id<=15)return 120;
+
+    return 105;
+
+}
+
+
+function getTime(id){
+
+    if(!state.timers[id]){
+
+        state.timers[id]={
+            end:Date.now()+getLimit(id)*1000
+        };
+
+        save();
+
+    }
+
+    return Math.max(
+        0,
+        Math.floor(
+            (state.timers[id].end-Date.now())/1000
+        )
+    );
+
+}
+
+
+function formatTime(seconds){
+
+    let minutes=Math.floor(seconds/60);
+
+    let sec=seconds%60;
+
+    return String(minutes).padStart(2,"0")
+    +":"
+    +String(sec).padStart(2,"0");
+
+}
+
+
+/* =====================================
+   МОДАЛЬНОЕ ОКНО
+===================================== */
+
+function showModal(title,content){
+
+    let modal=document.getElementById("modal");
+
+    if(!modal)return;
+
+    modal.innerHTML=`
+
+        <div class="modalBox">
+
+            <button
+            class="close"
+            onclick="closeModal()"
+            aria-label="Закрыть">
+
+                ×
+
+            </button>
+
+            <h2 class="modalTitle">
+                ${title}
+            </h2>
+
+            ${content}
+
+        </div>
+
+    `;
+
+    modal.classList.remove("hidden");
+
+}
+
+
+function closeModal(){
+
+    let modal=document.getElementById("modal");
+
+    if(modal){
+
+        modal.classList.add("hidden");
+
+    }
+
+}
+
+
+/* =====================================
+   ГЛАВНОЕ МЕНЮ
+===================================== */
+
+function home(){
+
+    clearInterval(timerInterval);
+
+    currentCase=0;
+
+    renderHome();
+
+}
+
+
+function renderHome(){
+
+    let solved=state.solved.filter(
+        id=>id<=20
+    ).length;
+
+    let cards="";
+
+
+    allCases.forEach((c,index)=>{
+
+        let id=index+1;
+
+        let unlocked=isUnlocked(id);
+
+        let stars=state.stars[id]||0;
+
+
+        cards+=`
+
+        <div
+        class="case ${unlocked?"":"locked"} ${isSecret(id)?"secret":""}"
+        onclick="${unlocked
+            ?`openCase(${id})`
+            :"lockedMessage()"}">
+
+            <div class="row">
+
+                <span class="badge">
+
+                    ${
+                        isSecret(id)
+                        ?"🔐 СЕКРЕТ"
+                        :"ДЕЛО №"+String(id).padStart(2,"0")
+                    }
+
+                </span>
+
+                <span class="small">
+                    ${c.difficulty}
+                </span>
+
+            </div>
+
+            <h3>
+                ${esc(c.title)}
+            </h3>
+
+            <p class="muted small">
+                📍 ${esc(c.place)}
+            </p>
+
+            <div class="stars">
+
+                ${
+                    stars>0
+                    ?"⭐".repeat(stars)+"☆".repeat(3-stars)
+                    :unlocked
+                    ?"ОТКРЫТО"
+                    :"🔒 ЗАКРЫТО"
+                }
+
+            </div>
+
+        </div>
+
+        `;
+
+    });
+
+
+    document.getElementById("app").innerHTML=`
+
+        <div class="top">
+
+            <div class="logo">
+                🕵️ КТО ВРЁТ?
+            </div>
+
+            <div class="stats">
+
+                <span class="stat">
+                    ❤️ ${state.lives}
+                </span>
+
+                <span class="stat">
+                    💰 ${state.coins}
+                </span>
+
+                <span class="stat">
+                    ⭐ ${state.points}
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="card hero">
+
+            <div class="big">
+                🕵️
+            </div>
+
+            <h1>
+                КТО ВРЁТ?
+            </h1>
+
+            <p class="muted">
+                Собирай улики, проверяй алиби
+                и находи главного лжеца.
+            </p>
+
+
+            <div class="kpis">
+
+                <div class="kpi">
+
+                    <b>
+                        ${solved}/20
+                    </b>
+
+                    <span class="small muted">
+                        дел раскрыто
+                    </span>
+
+                </div>
+
+
+                <div class="kpi">
+
+                    <b>
+                        ${state.points}
+                    </b>
+
+                    <span class="small muted">
+                        очков
+                    </span>
+
+                </div>
+
+
+                <div class="kpi">
+
+                    <b>
+                        ${state.coins}
+                    </b>
+
+                    <span class="small muted">
+                        монет
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <button
+            class="btn"
+            onclick="continueGame()">
+
+                ▶ Продолжить
+
+            </button>
+
+
+            <button
+            class="btn secondary"
+            onclick="shop()">
+
+                🛒 Магазин
+
+            </button>
+
+
+            <button
+            class="btn secondary"
+            onclick="rules()">
+
+                📖 Правила
+
+            </button>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="row">
+
+                <h2>
+                    📂 Досье
+                </h2>
+
+                <span class="small muted">
+                    ${solved}/20 раскрыто
+                </span>
+
+            </div>
+
+
+            <div class="grid">
+
+                ${cards}
+
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <button
+            class="btn red"
+            onclick="confirmReset()">
+
+                🗑️ Сбросить прогресс
+
+            </button>
+
+        </div>
+
+
+        <div
+        id="modal"
+        class="modal hidden">
+        </div>
+
+    `;
+
+}
+
+
+function continueGame(){
+
+    let id=state.unlocked;
+
+    if(id>20){
+        id=20;
+    }
+
+    openCase(id);
+
+}
+
+
+function lockedMessage(){
+
+    showModal(
+
+        "🔒 Дело закрыто",
+
+        `
+
+        <p>
+            Это расследование пока недоступно.
+        </p>
+
+        <p class="muted">
+            Раскрой предыдущие дела,
+            чтобы продвинуться дальше.
+        </p>
+
+        <div class="modalButtons">
+
+            <button
+            class="btn"
+            onclick="closeModal()">
+
+                Понятно
+
+            </button>
+
+        </div>
+
+        `
+
+    );
+
+}
+
+
+/* =====================================
+   ОТКРЫТИЕ ДЕЛА
+===================================== */
+
+function openCase(id){
+
+    if(!isUnlocked(id)){
+
+        lockedMessage();
+
+        return;
+
+    }
+
+
+    currentCase=id;
+
+    currentTab="clues";
+
+    getClues(id);
+
+    getQuestions(id);
+
+    getTime(id);
+
+    save();
+
+    renderCase();
+
+    startTimer();
+
+}
+
+
+function startTimer(){
+
+    clearInterval(timerInterval);
+
+    timerInterval=setInterval(()=>{
+
+        let time=getTime(currentCase);
+
+        let timer=document.getElementById("timer");
+
+
+        if(timer){
+
+            timer.textContent=
+                formatTime(time);
+
+
+            if(time<=20){
+
+                timer.classList.add(
+                    "dangerTimer"
+                );
+
+            }else{
+
+                timer.classList.remove(
+                    "dangerTimer"
+                );
+
+            }
+
+        }
+
+
+        if(time<=0){
+
+            clearInterval(timerInterval);
+
+            timeout();
+
+        }
+
+    },500);
+
+}
+
+
+function timeout(){
+
+    showModal(
+
+        "⏰ Время вышло",
+
+        `
+
+        <p>
+            Время расследования закончилось.
+        </p>
+
+        <p class="muted">
+            Ты можешь начать это дело заново.
+        </p>
+
+        <div class="modalButtons">
+
+            <button
+            class="btn"
+            onclick="
+            closeModal();
+            openCase(${currentCase});
+            ">
+
+                🔄 Начать заново
+
+            </button>
+
+
+            <button
+            class="btn secondary"
+            onclick="
+            closeModal();
+            home();
+            ">
+
+                ← К списку дел
+
+            </button>
+
+        </div>
+
+        `
+
+    );
+
+}
+
+
+/* =====================================
+   ЭКРАН ДЕЛА
+===================================== */
+
+function renderCase(){
+
+    let c=allCases[currentCase];
+
+    let clues=getClues(currentCase);
+
+    let questions=getQuestions(currentCase);
+
+    let content="";
+
+
+    if(currentTab==="clues"){
+
+        content=c.clues.map(
+            (clue,index)=>{
+
+                let found=
+                    clues.includes(index);
+
+
+                return `
+
+                <div
+                class="item ${found?"found":""}">
+
+                    <strong>
+
+                        ${
+                            found
+                            ?"🔎 Улика найдена"
+                            :"❓ Неизвестная улика"
+                        }
+
+                    </strong>
+
+
+                    <p>
+
+                        ${
+                            found
+                            ?esc(clue)
+                            :"Нужно внимательно осмотреть место."
+                        }
+
+                    </p>
+
+
+                    ${
+                        found
+                        ?""
+                        :`
+                        <button
+                        class="btn secondary"
+                        onclick="findClue(${index})">
+
+                            🔍 Осмотреть
+
+                        </button>
+                        `
+                    }
+
+                </div>
+
+                `;
+
+            }
+        ).join("");
+
+    }
+
+
+    if(currentTab==="people"){
+
+        content=c.people.map(
+            (person,index)=>{
+
+                let asked=
+                    questions.includes(index);
+
+
+                return `
+
+                <div class="item">
+
+                    <strong>
+                        👤 ${esc(person)}
+                    </strong>
+
+                    <p class="muted small">
+                        Подозреваемый №${index+1}
+                    </p>
+
+
+                    <button
+                    class="btn secondary"
+                    onclick="question(${index})">
+
+                        ${
+                            asked
+                            ?"🔁 Спросить ещё"
+                            :"💬 Допросить"
+                        }
+
+                    </button>
+
+
+                    <button
+                    class="btn red"
+                    onclick="accuse(${index})">
+
+                        ⚖️ Обвинить
+
+                    </button>
+
+                </div>
+
+                `;
+
+            }
+        ).join("");
+
+    }
+
+
+    if(currentTab==="journal"){
+
+        content=`
+
+        <div class="item">
+
+            <strong>
+                📓 Журнал расследования
+            </strong>
+
+            <p>
+                Найдено улик:
+                ${clues.length}/${c.clues.length}
+            </p>
+
+            <p>
+                Допросов:
+                ${questions.length}/3
+            </p>
+
+            <p>
+                Осталось времени:
+                ${formatTime(getTime(currentCase))}
+            </p>
+
+        </div>
+
+        `;
+
+
+        clues.forEach(index=>{
+
+            content+=`
+
+            <div class="item found">
+
+                <strong>
+                    🔎 Улика №${index+1}
+                </strong>
+
+                <p>
+                    ${esc(c.clues[index])}
+                </p>
+
+            </div>
+
+            `;
+
+        });
+
+    }
+
+
+    document.getElementById("app").innerHTML=`
+
+        <div class="top">
+
+            <button
+            class="btn secondary"
+            onclick="home()">
+
+                ← Дела
+
+            </button>
+
+
+            <div
+            id="timer"
+            class="timer">
+
+                ${formatTime(
+                    getTime(currentCase)
+                )}
+
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="row">
+
+                <span class="badge">
+
+                    ${
+                        isSecret(currentCase)
+                        ?"🔐 СЕКРЕТНОЕ ДЕЛО"
+                        :"📁 ДЕЛО №"+
+                        String(currentCase).padStart(2,"0")
+                    }
+
+                </span>
+
+
+                <span class="badge">
+
+                    ${c.difficulty}
+
+                </span>
+
+            </div>
+
+
+            <h1>
+                ${esc(c.title)}
+            </h1>
+
+
+            <p class="muted">
+                📍 ${esc(c.place)}
+            </p>
+
+
+            <p>
+                ${esc(c.story)}
+            </p>
+
+
+            <div class="progress">
+
+                <div
+                style="
+                width:${(
+                    clues.length /
+                    c.clues.length
+                )*100}%;
+                ">
+
+                </div>
+
+            </div>
+
+
+            <p class="small muted">
+
+                Улики:
+                ${clues.length}/${c.clues.length}
+
+                ·
+
+                Допросов:
+                ${questions.length}
+
+            </p>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="tabs">
+
+                <button
+                class="tab ${
+                    currentTab==="clues"
+                    ?"active":""
+                }"
+                onclick="
+                changeTab('clues')
+                ">
+
+                    🔎 Улики
+
+                </button>
+
+
+                <button
+                class="tab ${
+                    currentTab==="people"
+                    ?"active":""
+                }"
+                onclick="
+                changeTab('people')
+                ">
+
+                    👥 Люди
+
+                </button>
+
+
+                <button
+                class="tab ${
+                    currentTab==="journal"
+                    ?"active":""
+                }"
+                onclick="
+                changeTab('journal')
+                ">
+
+                    📓 Журнал
+
+                </button>
+
+            </div>
+
+
+            ${content}
+
+        </div>
+
+
+        <div class="card">
+
+            <button
+            class="btn gold"
+            onclick="useHint()">
+
+                💡 Подсказка
+
+            </button>
+
+
+            ${
+                state.shop.time>0
+                ?`
+                <button
+                class="btn secondary"
+                onclick="useExtraTime()">
+
+                    ⏱️ +30 сек
+                    (${state.shop.time})
+
+                </button>
+                `
+                :""
+            }
+
+
+            ${
+                state.shop.life>0
+                ?`
+                <button
+                class="btn secondary"
+                onclick="useExtraLife()">
+
+                    ❤️ Жизнь
+                    (${state.shop.life})
+
+                </button>
+                `
+                :""
+            }
+
+        </div>
+
+
+        <div
+        id="modal"
+        class="modal hidden">
+        </div>
+
+    `;
+
+}
+
+
+function changeTab(tab){
+
+    currentTab=tab;
+
+    renderCase();
+
+}
+
+
+/* =====================================
+   УЛИКИ
+===================================== */
+
+function findClue(index){
+
+    let clues=getClues(currentCase);
+
+    if(!clues.includes(index)){
+
+        clues.push(index);
+
+        state.points+=10;
+
+        save();
+
+
+        showModal(
+
+            "🔎 Новая улика",
+
+            `
+
+            <p>
+                Ты нашёл(ла) новую улику.
+            </p>
+
+            <div class="notice">
+
+                ${esc(
+                    allCases[currentCase].clues[index]
+                )}
+
+            </div>
+
+            <div class="modalButtons">
+
+                <button
+                class="btn"
+                onclick="
+                closeModal();
+                renderCase();
+                ">
+
+                    Добавить в журнал
+
+                </button>
+
+            </div>
+
+            `
+
+        );
+
+    }
+
+}
+
+
+/* =====================================
+   ДОПРОС
+===================================== */
+
+function question(index){
+
+    let c=allCases[currentCase];
+
+    let questions=
+        getQuestions(currentCase);
+
+
+    if(!questions.includes(index)){
+
+        questions.push(index);
+
+        state.points+=5;
+
+        save();
+
+    }
+
+
+    showModal(
+
+        "💬 Допрос",
+
+        `
+
+        <h3>
+            ${esc(c.people[index])}
+        </h3>
+
+        <p class="muted">
+            Ответ подозреваемого:
+        </p>
+
+        <div class="notice">
+
+            «${esc(c.answers[index])}»
+
+        </div>
+
+
+        <div class="modalButtons">
+
+            <button
+            class="btn"
+            onclick="
+            closeModal();
+            renderCase();
+            ">
+
+                Закрыть
+
+            </button>
+
+        </div>
+
+        `
+
+    );
+
+}
+
+
+/* =====================================
+   ОБВИНЕНИЕ
+===================================== */
+
+function accuse(index){
+
+    let c=allCases[currentCase];
+
+
+    if(getTime(currentCase)<=0){
+
+        timeout();
+
+        return;
+
+    }
+
+
+    if(index===c.culprit){
+
+        winCase();
+
+        return;
+
+    }
+
+
+    state.lives--;
+
+    state.points=Math.max(
+        0,
+        state.points-25
+    );
+
+    state.streak=0;
+
+    save();
+
+
+    if(state.lives<=0){
+
+        state.lives=3;
+
+        save();
+
+
+        showModal(
+
+            "❌ Расследование провалено",
+
+            `
+
+            <p>
+                Ты использовал(а) все жизни.
+            </p>
+
+            <p class="muted">
+                Попробуй снова и внимательнее
+                сравнивай показания с уликами.
+            </p>
+
+
+            <div class="modalButtons">
+
+                <button
+                class="btn"
+                onclick="
+                closeModal();
+                openCase(${currentCase});
+                ">
+
+                    🔄 Попробовать ещё
+
+                </button>
+
+            </div>
+
+            `
+
+        );
+
+    }else{
+
+        showModal(
+
+            "❌ Неверное обвинение",
+
+            `
+
+            <p>
+                Этот человек не является
+                главным лжецом.
+            </p>
+
+            <p>
+                Осталось жизней:
+                ❤️ ${state.lives}
+            </p>
+
+            <div class="modalButtons">
+
+                <button
+                class="btn"
+                onclick="closeModal()">
+
+                    Продолжить
+
+                </button>
+
+            </div>
+
+            `
+
+        );
+
+    }
+
+}
+
+
+/* =====================================
+   ПОБЕДА
+===================================== */
+
+function winCase(){
+
+    let c=allCases[currentCase];
+
+    let clues=getClues(currentCase);
+
+    let questions=getQuestions(currentCase);
+
+    let used=
+        getLimit(currentCase)-
+        getTime(currentCase);
+
+
+    let stars=1;
+
+
+    if(
+        clues.length>=2 &&
+        questions.length>=2
+    ){
+
+        stars=2;
+
+    }
+
+
+    if(
+        clues.length===c.clues.length &&
+        questions.length>=3 &&
+        used<getLimit(currentCase)*.75
+    ){
+
+        stars=3;
+
+    }
+
+
+    if(
+        !state.solved.includes(currentCase)
+    ){
+
+        state.solved.push(currentCase);
+
+    }
+
+
+    state.stars[currentCase]=stars;
+
+
+    state.points+=80+(stars*30);
+
+    state.coins+=30+(stars*10);
+
+    state.streak++;
+
+
+    if(
+        currentCase===state.unlocked &&
+        currentCase<=20
+    ){
+
+        state.unlocked++;
+
+    }
+
+
+    delete state.timers[currentCase];
+
+    save();
+
+    clearInterval(timerInterval);
+
+
+    showModal(
+
+        "🎉 Дело раскрыто!",
+
+        `
+
+        <div class="stars">
+
+            ${"⭐".repeat(stars)}
+            ${"☆".repeat(3-stars)}
+
+        </div>
+
+
+        <p>
+
+            Главный лжец:
+
+            <b>
+                ${esc(c.people[c.culprit])}
+            </b>
+
+        </p>
+
+
+        <p class="muted">
+
+            Ты правильно сопоставил(а)
+            показания и объективные улики.
+
+        </p>
+
+
+        <p class="coins">
+
+            +${30+(stars*10)} 🪙
+
+        </p>
+
+
+        <div class="modalButtons">
+
+            <button
+            class="btn"
+            onclick="
+            closeModal();
+            home();
+            ">
+
+                📂 К списку дел
+
+            </button>
+
+        </div>
+
+        `
+
+    );
+
+}
+
+
+/* =====================================
+   ПОДСКАЗКА
+===================================== */
+
+function useHint(){
+
+    if(state.shop.hint>0){
+
+        state.shop.hint--;
+
+    }else{
+
+        if(state.points<30){
+
+            showModal(
+
+                "💡 Подсказка недоступна",
+
+                `
+
+                <p>
+                    Для обычной подсказки
+                    нужно <b>30 очков</b>.
+                </p>
+
+                <p class="muted">
+                    Или купи билет подсказки
+                    в магазине.
+                </p>
+
+                `
+
+            );
+
+            return;
+
+        }
+
+        state.points-=30;
+
+    }
+
+
+    let c=allCases[currentCase];
+
+    save();
+
+
+    showModal(
+
+        "💡 Подсказка",
+
+        `
+
+        <p>
+            Обрати особое внимание
+            на подозреваемого №${c.culprit+1}.
+        </p>
+
+        <div class="notice">
+
+            Сравни его слова с фактами
+            из раздела «Улики».
+
+        </div>
+
+        `
+
+    );
+
+}
+
+
+function useExtraTime(){
+
+    if(state.shop.time<=0)return;
+
+
+    state.shop.time--;
+
+    state.timers[currentCase].end+=30000;
+
+    save();
+
+    closeModal();
+
+    renderCase();
+
+}
+
+
+function useExtraLife(){
+
+    if(state.shop.life<=0)return;
+
+
+    state.shop.life--;
+
+    state.lives++;
+
+    save();
+
+    closeModal();
+
+    renderCase();
+
+}
+
+
+/* =====================================
+   МАГАЗИН
+===================================== */
+
+function shop(){
+
+    showModal(
+
+        "🛒 Магазин",
+
+        `
+
+        <p class="coins">
+            Монеты:
+            <b>${state.coins}</b> 🪙
+        </p>
+
+
+        <div class="shop">
+
+
+            <div class="item">
+
+                <h3>
+                    💡 Подсказка
+                </h3>
+
+                <p>
+                    Один бесплатный
+                    билет подсказки.
+                </p>
+
+                <button
+                class="btn"
+                onclick="buy('hint')">
+
+                    40 🪙
+
+                </button>
+
+            </div>
+
+
+            <div class="item">
+
+                <h3>
+                    ⏱️ Время
+                </h3>
+
+                <p>
+                    +30 секунд.
+                </p>
+
+                <button
+                class="btn"
+                onclick="buy('time')">
+
+                    50 🪙
+
+                </button>
+
+            </div>
+
+
+            <div class="item">
+
+                <h3>
+                    ❤️ Жизнь
+                </h3>
+
+                <p>
+                    +1 жизнь.
+                </p>
+
+                <button
+                class="btn"
+                onclick="buy('life')">
+
+                    60 🪙
+
+                </button>
+
+            </div>
+
+
+        </div>
+
+        `
+
+    );
+
+}
+
+
+function buy(type){
+
+    const prices={
+        hint:40,
+        time:50,
+        life:60
+    };
+
+
+    if(state.coins<prices[type]){
+
+        showModal(
+
+            "💰 Недостаточно монет",
+
+            `
+
+            <p>
+                Для этой покупки нужно
+                <b>${prices[type]} 🪙</b>.
+            </p>
+
+            <p class="muted">
+                Твои монеты:
+                ${state.coins} 🪙
+            </p>
+
+            `
+
+        );
+
+        return;
+
+    }
+
+
+    state.coins-=prices[type];
+
+    state.shop[type]++;
+
+    save();
+
+
+    let names={
+        hint:"💡 Билет подсказки",
+        time:"⏱️ Дополнительное время",
+        life:"❤️ Дополнительная жизнь"
+    };
+
+
+    showModal(
+
+        "✅ Покупка совершена",
+
+        `
+
+        <p>
+            Ты приобрёл(ла):
+        </p>
+
+        <h3>
+            ${names[type]}
+        </h3>
+
+        <p class="coins">
+            Осталось:
+            ${state.coins} 🪙
+        </p>
+
+        `
+
+    );
+
+}
+
+
+/* =====================================
+   ПРАВИЛА
+===================================== */
+
+function rules(){
+
+    showModal(
+
+        "📖 Как играть",
+
+        `
+
+        <p>
+            <b>1.</b>
+            Изучи историю дела.
+        </p>
+
+        <p>
+            <b>2.</b>
+            Осматривай место
+            и собирай улики.
+        </p>
+
+        <p>
+            <b>3.</b>
+            Допроси подозреваемых.
+        </p>
+
+        <p>
+            <b>4.</b>
+            Сравнивай их слова
+            с объективными фактами.
+        </p>
+
+        <p>
+            <b>5.</b>
+            Выбери того,
+            чьи показания противоречат уликам.
+        </p>
+
+
+        <div class="notice">
+
+            ⭐⭐⭐ — все улики,
+            минимум 3 допроса
+            и быстрое правильное обвинение.
+
+        </div>
+
+        `
+
+    );
+
+}
+
+
+/* =====================================
+   ПОДТВЕРЖДЕНИЕ СБРОСА
+===================================== */
+
+function confirmReset(){
+
+    showModal(
+
+        "🗑️ Сбросить прогресс?",
+
+        `
+
+        <p>
+            Будут удалены:
+        </p>
+
+        <ul>
+
+            <li>открытые дела;</li>
+            <li>очки;</li>
+            <li>монеты;</li>
+            <li>звёзды;</li>
+            <li>купленные предметы.</li>
+
+        </ul>
+
+
+        <p class="muted">
+            Это действие нельзя отменить.
+        </p>
+
+
+        <div class="modalButtons">
+
+            <button
+            class="btn red"
+            onclick="resetGame()">
+
+                Да, сбросить
+
+            </button>
+
+
+            <button
+            class="btn secondary"
+            onclick="closeModal()">
+
+                Отмена
+
+            </button>
+
+        </div>
+
+        `
+
+    );
+
+}
+
+
+function resetGame(){
+
+    localStorage.removeItem(SAVE_KEY);
+
+    location.reload();
+
+}
+
+
+/* =====================================
+   СТАРТ
+===================================== */
+
+renderHome();
+
+</script>
+
+</body>
+</html>
